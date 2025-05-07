@@ -2,7 +2,6 @@ package com.animeworld.animeapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
@@ -16,5 +15,6 @@ public class AnimeAppApplication {
 		SpringApplication.run(AnimeAppApplication.class, args);
 		
 	}
+
 
 }
