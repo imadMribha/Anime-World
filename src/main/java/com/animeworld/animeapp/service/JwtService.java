@@ -65,6 +65,6 @@ public class JwtService {
 	}
 	
 	private Key getSignInKey() {
-		return Keys.hmacShaKeyFor(secretKey.getBytes());
+		return Keys.hmacShaKeyFor(secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 	}
 }

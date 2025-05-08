@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -40,12 +41,13 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for API
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/auth/**").permitAll() // Allow login/register
+                        .requestMatchers("/api/auth/**").permitAll()  // 👈 This line is critical
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 	
@@ -90,5 +92,10 @@ public class SecurityConfig {
 		};
 	}
 	
+	//password encoder bean
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+	}
 
 }
