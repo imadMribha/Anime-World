@@ -19,15 +19,18 @@ public class AuthService {
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
+	private final UserDetailsServiceImpl userDetailsService;
 	
 	public AuthService(UserRepository userRepository,
 					   JwtService jwtService,
 					   AuthenticationManager authenticationManager,
-					   PasswordEncoder passwordEncoder) {
+					   PasswordEncoder passwordEncoder,
+					   UserDetailsServiceImpl userDetailsService) {
 		this.userRepository = userRepository;
 		this.jwtService = jwtService;
 		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
+		this.userDetailsService = userDetailsService;
 	}
 	
 	public AuthResponse register(RegisterRequest request) {
@@ -47,12 +50,15 @@ public class AuthService {
 	
 	public AuthResponse login(LoginRequest request) {
 		authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-		);
+		        new UsernamePasswordAuthenticationToken(
+		            request.getUsername(),
+		            request.getPassword()
+		        )
+		    );
 		
-		UserDetails user = (UserDetails) userRepository.findByUsername(request.getUsername()).orElseThrow();
-		
-		String token = jwtService.generateToken(user.getUsername());
+		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+
+		String token = jwtService.generateToken(userDetails.getUsername());
 		
 		return new AuthResponse(token);
 	}
